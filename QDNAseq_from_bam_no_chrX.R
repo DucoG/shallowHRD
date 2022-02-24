@@ -41,6 +41,8 @@ bins <- getBinAnnotations(binSize=bin_size)
 
 readCounts <- binReadCounts(bins, path=inputPath)
 
+saveRDS(readCounts, file=paste0(outputPath, '/', 'readcounts.rds'))
+
 # exportBins(readCounts, file="D038R4_readcount_unfiltered_10kb.tsv", 
 #            format="tsv", type=c("copynumber"), logTransform = FALSE)
  
@@ -62,6 +64,9 @@ copyNumbersSegmented <- segmentBins(copyNumbersSmooth, transformFun = 'none',
                                     alpha = 0.05, nperm = 10000, p.method = "hybrid",
                                     min.width=5, kmax=25, nmin=200, eta=0.05,
                                     trim = 0.025, undo.splits = "sdundo", undo.SD=1)
+
+saveRDS(copyNumbersSegmented, file=paste0(outputPath, '/', 'segmented.rds'))
+
  
 copyNumbersSegmented <- normalizeSegmentedBins(copyNumbersSegmented)
  
@@ -78,7 +83,4 @@ head(X)
 
 
 colnames(X) <- c("chromosome", "start", "ratio", "ratio_median")
-write.table(X, file = paste0(outputPath,"/",NAMEEE,".bam_ratio.txt"), sep = "\t", row.names = FALSE)
-
-file.remove(paste0(outputPath,"/",NAMEEE,".bam_CN"))
-file.remove(paste0(outputPath,"/",NAMEEE,".bam_seg"))
+write.table(X, file = paste0(outputPath,"/","bam_ratio.txt"), sep = "\t", row.names = FALSE)
