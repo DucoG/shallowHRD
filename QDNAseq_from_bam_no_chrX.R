@@ -20,12 +20,7 @@ library("CGHcall")
 args = commandArgs(trailingOnly=TRUE)
 
 path_to_bam_file = args[1]
-inputPath = normalizePath(dirname(path_to_bam_file))
-
-NAMEEE_intermediary1 = gsub("\\", "/", normalizePath(path_to_bam_file), fixed = TRUE) # for window path
-NAMEEE_intermediary2 = sub("*/*.bam", "", NAMEEE_intermediary1)
-
-NAMEEE = sub(".*/", "", NAMEEE_intermediary2)
+inputPath = normalizePath(path_to_bam_file)
 
 output_relative_Path = args[2]
 outputPath = normalizePath(output_relative_Path)
@@ -34,7 +29,6 @@ bin_size = args[3]
 
 
 inputPath
-NAMEEE
 outputPath
 bin_size
 
@@ -45,9 +39,7 @@ bin_size = as.numeric(bin_size)
 
 bins <- getBinAnnotations(binSize=bin_size)
 
-paste0(outputPath,"/",NAMEEE,".bam")
-
-readCounts <- binReadCounts(bins, bamfiles=paste0(outputPath,"/",NAMEEE,".bam"))
+readCounts <- binReadCounts(bins, path=inputPath)
 
 # exportBins(readCounts, file="D038R4_readcount_unfiltered_10kb.tsv", 
 #            format="tsv", type=c("copynumber"), logTransform = FALSE)
@@ -73,11 +65,11 @@ copyNumbersSegmented <- segmentBins(copyNumbersSmooth, transformFun = 'none',
  
 copyNumbersSegmented <- normalizeSegmentedBins(copyNumbersSegmented)
  
-exportBins(copyNumbersSegmented, file=paste0(outputPath,"/",NAMEEE,".bam_CN"), format="tsv", type=c("copynumber")) # exporte les données au format VCF DEL and DUP
-exportBins(copyNumbersSegmented, file=paste0(outputPath,"/",NAMEEE,".bam_seg"), format="tsv", type=c("segments"))
+exportBins(copyNumbersSegmented, file=paste0(outputPath,"/","bam_CN.tsv"), format="tsv", type=c("copynumber")) # exporte les données au format VCF DEL and DUP
+exportBins(copyNumbersSegmented, file=paste0(outputPath,"/","bam_seg.tsv"), format="tsv", type=c("segments"))
  
-X = read.table(paste0(outputPath,"/",NAMEEE,".bam_CN"), sep = "\t", header = TRUE)
-Y = read.table(paste0(outputPath,"/",NAMEEE,".bam_seg"), sep = "\t", header = TRUE)
+X = read.table(paste0(outputPath,"/","bam_CN.tsv"), sep = "\t", header = TRUE)
+Y = read.table(paste0(outputPath,"/","bam_CN.tsv"), sep = "\t", header = TRUE)
  
 X = cbind(X, Y[,5])
 X = X[,-4]
